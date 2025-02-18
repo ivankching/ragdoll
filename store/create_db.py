@@ -1,5 +1,6 @@
 from dotenv import load_dotenv, find_dotenv
 import os
+from pathlib import Path
 import shutil
 from langchain_core.documents import Document
 from langchain_community.document_loaders import PyPDFDirectoryLoader
@@ -8,9 +9,11 @@ from langchain_core.vectorstores import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_core.runnables import chain
 
+ROOT = Path(__file__).parent.parent
+
 def load_documents():
     """Loads PDF files from data directory"""
-    loader = PyPDFDirectoryLoader(os.environ["DATA_PATH"])
+    loader = PyPDFDirectoryLoader(f"{ROOT}/{os.environ["DATA_PATH"]}")
     documents = loader.load()
     return documents
 
@@ -28,7 +31,7 @@ def split_text(documents):
 
 def save_to_chroma(chunks: list[Document]):
     """Save vectors into Chroma database"""
-    chroma_path = os.environ["CHROMA_PATH"]
+    chroma_path = f"{ROOT}/{os.environ["CHROMA_PATH"]}"
     # Clear out the db directory first
     if os.path.exists(chroma_path):
         shutil.rmtree(chroma_path)
