@@ -5,4 +5,4 @@ langchain-core
 langchain-text-splitters
 dotenv
 pypdf
-chromadb
+chromadb==0.6.3
