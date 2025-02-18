@@ -4,3 +4,4 @@ langchain-huggingface
 langchain-core
 langchain-text-splitters
 dotenv
+pypdf
