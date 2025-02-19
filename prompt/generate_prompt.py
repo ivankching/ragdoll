@@ -1,11 +1,11 @@
-import os
+from os import getenv
 from dotenv import load_dotenv, find_dotenv
 import argparse
 from pathlib import Path
 
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 
 load_dotenv(find_dotenv())
@@ -19,7 +19,7 @@ Answer this question based on the context above: {question}
 
 def query_db(query):
     embedding_fn =  HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-l6-v2")
-    db = Chroma(persist_directory=f"{ROOT}/{os.environ["CHROMA_PATH"]}", embedding_function=embedding_fn)
+    db = Chroma(persist_directory=f"{ROOT}/{getenv("CHROMA_PATH")}", embedding_function=embedding_fn)
 
     results = db.similarity_search_with_relevance_scores(query, k=4)
     if len(results) == 0:
@@ -39,6 +39,17 @@ def create_prompt(query):
     print(prompt)
     return prompt
 
+def chat_model_response(prompt):
+    """Send prompt to chat model and get response"""
+    llm = ChatOpenAI(
+        openai_api_key=getenv("OPENROUTER_API_KEY"),
+        openai_api_base=getenv("OPENROUTER_BASE_URL"),
+        model_name="meta-llama/llama-3.3-70b-instruct:free"
+    )
+    response = llm.invoke(prompt)
+    print(response.content)
+    return response
+
 if __name__ == "__main__":
     # Command line input query
     parser = argparse.ArgumentParser()
@@ -46,4 +57,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
     query = args.query
 
-    create_prompt(query)
+    prompt = create_prompt(query)
+    response = chat_model_response(prompt)
