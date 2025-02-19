@@ -5,6 +5,7 @@ from pathlib import Path
 
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
+from langchain.chat_models import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 
 load_dotenv(find_dotenv())
@@ -29,6 +30,9 @@ def query_db(query):
 
 def create_prompt(query):
     context = query_db(query)
+    if not context:
+        print(f"No context")
+        return
     context = "\n\n--\n\n".join([doc.page_content for doc, score in context])
     prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
     prompt = prompt_template.format(context=context, question=query)
