@@ -7,3 +7,4 @@ langchain-chroma
 dotenv
 pypdf
 chromadb==0.6.3
+flask
