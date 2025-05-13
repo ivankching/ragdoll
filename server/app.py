@@ -13,4 +13,4 @@ def query():
     query = request.json['query']
     prompt = create_prompt(query)
     response = chat_model_response(prompt)
-    return jsonify({"response": response.content})
+    return jsonify({"answer": response.content})
