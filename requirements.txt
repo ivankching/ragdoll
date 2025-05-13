@@ -4,6 +4,7 @@ langchain-huggingface
 langchain-core
 langchain-text-splitters
 langchain-chroma
+langchain-openai
 dotenv
 pypdf
 chromadb==0.6.3
