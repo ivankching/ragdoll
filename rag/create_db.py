@@ -38,7 +38,6 @@ def save_to_chroma(chunks: list[Document]):
     # Create a vector db from the documents
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-l6-v2")
     db = Chroma.from_documents(chunks, embeddings, persist_directory=chroma_path)
-    db.persist()
     print(f"Saved {len(chunks)} chunks to database in {chroma_path}.")
 
 
