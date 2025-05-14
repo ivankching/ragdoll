@@ -8,4 +8,4 @@ langchain-openai
 dotenv
 pypdf
 chromadb==0.6.3
-flask
+fastapi[standard]
