@@ -13,10 +13,10 @@ ROOT = Path(__file__).parent.parent
 def load_documents():
     """Loads PDF files from data directory"""
     loader = PyPDFDirectoryLoader(f"{ROOT}/{os.environ["DATA_PATH"]}")
-    documents = loader.load()
+    documents: list[Document] = loader.load()
     return documents
 
-def split_text(documents):
+def split_text(documents: list[Document]):
     """Splits documents into chunks"""
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=1000,
@@ -24,7 +24,7 @@ def split_text(documents):
         add_start_index=True
     )
 
-    chunks = text_splitter.split_documents(documents)
+    chunks: list[Document] = text_splitter.split_documents(documents)
     print(f"Split {len(documents)} documents into {len(chunks)} chunks.")
     return chunks
 
