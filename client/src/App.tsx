@@ -38,9 +38,9 @@ function App() {
 
         <input type="submit" value="Generate Answer" />
       </form>
-      <div className={styles.queryOutput}>
+      {answer && <div className={styles.queryOutput}>
         {answer}
-      </div>
+      </div>}
       <footer className={styles.footer}>
         <a href="https://www.flaticon.com/free-icons/brain" title="brain icons">Brain icons created by Freepik - Flaticon</a>
       </footer>
