@@ -14,16 +14,17 @@ function App() {
   }
 
   const generateAnswer = async () => {
-    const response = await fetch("http://127.0.0.1:5000/query", {
+    const response = await fetch("http://127.0.0.1:8000/query", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({query: query})
+      body: JSON.stringify({content: query})
     });
 
     const data = await response.json();
-    return data.answer;
+    console.log(data)
+    return data.content;
   }
 
   return (
