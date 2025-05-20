@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FileText, Trash2, Download, Loader } from 'lucide-react';
+import './KnowledgeBase.css';
 
 // Document type definition
 interface Document {
@@ -221,9 +222,9 @@ const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({
   // Loading state
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Loader className="w-8 h-8 animate-spin text-blue-500" />
-        <span className="ml-2 text-lg">Loading documents...</span>
+      <div className="loading-container">
+        <Loader className="loading-spinner" />
+        <span className="loading-text">Loading documents...</span>
       </div>
     );
   }
@@ -231,10 +232,10 @@ const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({
   // Error state
   if (error) {
     return (
-      <div className="p-4 bg-red-50 text-red-600 rounded-md">
+      <div className="error-container">
         <p>{error}</p>
         <button 
-          className="mt-2 px-4 py-2 bg-red-100 text-red-700 rounded-md hover:bg-red-200"
+          className="retry-button"
           onClick={() => window.location.reload()}
         >
           Retry
@@ -246,10 +247,10 @@ const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({
   // Empty state
   if (filteredAndSortedDocuments.length === 0) {
     return (
-      <div className="p-8 text-center">
-        <FileText className="w-16 h-16 mx-auto text-gray-400" />
-        <h3 className="mt-4 text-xl font-semibold text-gray-700">No documents found</h3>
-        <p className="mt-2 text-gray-500">
+      <div className="empty-container">
+        <FileText className="empty-icon" />
+        <h3 className="empty-title">No documents found</h3>
+        <p className="empty-message">
           {searchQuery ? 'Try adjusting your search query' : 'Upload your first document to get started'}
         </p>
       </div>
@@ -257,23 +258,23 @@ const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({
   }
 
   return (
-    <div className="w-full">
+    <div className="document-list">
       {/* Header with actions */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">
+      <div className="document-header">
+        <h2 className="document-title">
           Documents ({filteredAndSortedDocuments.length})
         </h2>
         
         {selectedDocuments.size > 0 && (
           <button
-            className="px-3 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 flex items-center"
+            className="delete-selected-button"
             onClick={handleBulkDelete}
             disabled={isDeleting}
           >
             {isDeleting ? (
-              <Loader className="w-4 h-4 animate-spin mr-2" />
+              <Loader className="button-icon spin" />
             ) : (
-              <Trash2 className="w-4 h-4 mr-2" />
+              <Trash2 className="button-icon" />
             )}
             Delete Selected ({selectedDocuments.size})
           </button>
@@ -281,14 +282,14 @@ const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({
       </div>
 
       {/* Document list */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <div className="document-table-container">
+        <table className="document-table">
+          <thead className="document-table-header">
             <tr>
-              <th scope="col" className="w-12 px-4 py-3">
+              <th scope="col" className="checkbox-column">
                 <input
                   type="checkbox"
-                  className="h-4 w-4"
+                  className="checkbox"
                   onChange={(e) => {
                     if (e.target.checked) {
                       setSelectedDocuments(new Set(documents.map(doc => doc.id)));
@@ -299,65 +300,65 @@ const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({
                   checked={selectedDocuments.size === documents.length && documents.length > 0}
                 />
               </th>
-              <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th scope="col" className="document-column">
                 Document
               </th>
-              <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th scope="col" className="date-column">
                 Last Modified
               </th>
-              <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th scope="col" className="size-column">
                 Size
               </th>
-              <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th scope="col" className="actions-column">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody>
             {filteredAndSortedDocuments.map((document) => (
-              <tr key={document.id} className="hover:bg-gray-50">
-                <td className="px-4 py-4 whitespace-nowrap">
+              <tr key={document.id} className="document-row">
+                <td className="checkbox-cell">
                   <input
                     type="checkbox"
-                    className="h-4 w-4"
+                    className="checkbox"
                     checked={selectedDocuments.has(document.id)}
                     onChange={() => toggleDocumentSelection(document.id)}
                   />
                 </td>
-                <td className="px-4 py-4">
-                  <div className="flex items-center">
-                    <FileText className="flex-shrink-0 h-5 w-5 text-gray-500" />
-                    <div className="ml-3">
-                      <div className="text-sm font-medium text-gray-900">{document.title}</div>
-                      {/* <div className="text-xs text-gray-500">Created: {formatDate(document.createdAt)}</div> */}
+                <td className="document-cell">
+                  <div className="document-info">
+                    <FileText className="document-icon" />
+                    <div className="document-details">
+                      <div className="document-name">{document.title}</div>
+                      {/* <div className="document-created">Created: {formatDate(document.createdAt)}</div> */}
                     </div>
                   </div>
                 </td>
-                {/* <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                {/* <td className="date-cell">
                   {formatDate(document.updatedAt)}
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="size-cell">
                   {formatFileSize(document.fileSize)}
                 </td> */}
-                <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <div className="flex justify-end space-x-2">
+                <td className="actions-cell">
+                  <div className="action-buttons">
                     <button
-                      className="p-1 text-blue-600 hover:text-blue-800"
+                      className="download-button"
                       onClick={() => handleDownload(document.id, document.title)}
                     >
-                      <Download className="h-5 w-5" />
+                      <Download className="action-icon" />
                     </button>
                     {/* <button
-                      className="p-1 text-green-600 hover:text-green-800"
+                      className="edit-button"
                     >
-                      <Edit className="h-5 w-5" />
+                      <Edit className="action-icon" />
                     </button> */}
                     <button
-                      className="p-1 text-red-600 hover:text-red-800"
+                      className="delete-button"
                       onClick={() => handleDelete(document.id)}
                       disabled={isDeleting}
                     >
-                      {isDeleting ? <Loader className="h-5 w-5 animate-spin" /> : <Trash2 className="h-5 w-5" />}
+                      {isDeleting ? <Loader className="action-icon spin" /> : <Trash2 className="action-icon" />}
                     </button>
                   </div>
                 </td>
