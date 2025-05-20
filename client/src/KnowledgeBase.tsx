@@ -303,12 +303,12 @@ const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({
               <th scope="col" className="document-column">
                 Document
               </th>
-              <th scope="col" className="date-column">
+              {/* <th scope="col" className="date-column">
                 Last Modified
               </th>
               <th scope="col" className="size-column">
                 Size
-              </th>
+              </th> */}
               <th scope="col" className="actions-column">
                 Actions
               </th>
