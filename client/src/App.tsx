@@ -1,7 +1,7 @@
 import styles from './index.module.css'
 import brainLogo from './assets/brainstorm.png'
 import { useState } from 'react'
-import { KnowledgeBaseList } from './KnowledgeBase';
+import KnowledgeBase from './KnowledgeBase';
 
 function App() {
   const [query, setQuery] = useState('');
@@ -43,7 +43,7 @@ function App() {
       {answer && <div className={styles.queryOutput}>
         {answer}
       </div>}
-      <KnowledgeBaseList></KnowledgeBaseList>
+      <KnowledgeBase></KnowledgeBase>
       <footer className={styles.footer}>
         <a href="https://www.flaticon.com/free-icons/brain" title="brain icons">Brain icons created by Freepik - Flaticon</a>
       </footer>
