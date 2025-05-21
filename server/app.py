@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from pathlib import Path
 from rag.query_data import create_prompt, chat_model_response
+from knowledge_base.file_management import get_files
 
 
 
@@ -34,3 +35,7 @@ def query(query: Query):
     prompt = create_prompt(query_content)
     response = chat_model_response(prompt)
     return response
+
+@app.get('/knowledge-base')
+def get_knowledge_base():
+    return get_files()
