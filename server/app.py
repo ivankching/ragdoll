@@ -1,9 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from pathlib import Path
 from rag.query_data import create_prompt, chat_model_response
-from knowledge_base.file_management import get_files
+from knowledge_base.file_management import get_files, upload_file
 
 
 
@@ -26,16 +26,29 @@ app.add_middleware(
 )
 
 @app.get("/")
-def read_root():
+async def read_root():
     return {"Hello": "World"}
 
 @app.post('/query')
-def query(query: Query):
+async def query(query: Query):
     query_content = query.content
     prompt = create_prompt(query_content)
     response = chat_model_response(prompt)
     return response
 
 @app.get('/knowledge-base')
-def get_knowledge_base():
+async def get_knowledge_base():
     return get_files()
+
+@app.post('/knowledge-base/upload')
+async def upload_document(document: UploadFile):
+    uploaded = await upload_file(document)
+    if not uploaded:
+        raise HTTPException(status_code=500, detail="Document upload failed")
+        
+    return {
+        "document_title": document.filename,
+        "message": "Document uploaded successfully"
+    }
+    
+    
