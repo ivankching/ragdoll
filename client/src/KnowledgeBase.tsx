@@ -69,6 +69,45 @@ const DocumentService = {
   }
 };
 
+// Uploader for a single file
+const FileUploader = () => {
+  const [file, setFile] = useState<File | null>(null);
+  
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFile(e.target.files[0]);
+    }
+  };
+
+  const handleUpload = async () => {
+    //TODO
+  };
+
+  return (
+    <>
+      <div className="input-group">
+        <input id="file" type="file" onChange={handleFileChange} />
+      </div>
+      {file && (
+        <section>
+          File details:
+          <ul>
+            <li>Name: {file.name}</li>
+            <li>Type: {file.type}</li>
+            <li>Size: {file.size} bytes</li>
+          </ul>
+        </section>
+      )}
+
+      {file && (
+        <button onClick={handleUpload} className="submit">
+          Upload a file
+        </button>
+      )}
+    </>
+  );
+}
+
 // // Utility function to format file size
 // const formatFileSize = (bytes: number): string => {
 //   if (bytes === 0) return '0 Bytes';
@@ -258,116 +297,120 @@ const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({
   }
 
   return (
-    <div className="document-list">
-      {/* Header with actions */}
-      <div className="document-header">
-        <h2 className="document-title">
-          Documents ({filteredAndSortedDocuments.length})
-        </h2>
-        
-        {selectedDocuments.size > 0 && (
-          <button
-            className="delete-selected-button"
-            onClick={handleBulkDelete}
-            disabled={isDeleting}
-          >
-            {isDeleting ? (
-              <Loader className="button-icon spin" />
-            ) : (
-              <Trash2 className="button-icon" />
-            )}
-            Delete Selected ({selectedDocuments.size})
-          </button>
-        )}
-      </div>
+    <>
+      <div className="document-list">
+        {/* Header with actions */}
+        <div className="document-header">
+          <h2 className="document-title">
+            Documents ({filteredAndSortedDocuments.length})
+          </h2>
+          
+          {selectedDocuments.size > 0 && (
+            <button
+              className="delete-selected-button"
+              onClick={handleBulkDelete}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <Loader className="button-icon spin" />
+              ) : (
+                <Trash2 className="button-icon" />
+              )}
+              Delete Selected ({selectedDocuments.size})
+            </button>
+          )}
+        </div>
 
-      {/* Document list */}
-      <div className="document-table-container">
-        <table className="document-table">
-          <thead className="document-table-header">
-            <tr>
-              <th scope="col" className="checkbox-column">
-                <input
-                  type="checkbox"
-                  className="checkbox"
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      setSelectedDocuments(new Set(documents.map(doc => doc.id)));
-                    } else {
-                      setSelectedDocuments(new Set());
-                    }
-                  }}
-                  checked={selectedDocuments.size === documents.length && documents.length > 0}
-                />
-              </th>
-              <th scope="col" className="document-column">
-                Document
-              </th>
-              {/* <th scope="col" className="date-column">
-                Last Modified
-              </th>
-              <th scope="col" className="size-column">
-                Size
-              </th> */}
-              <th scope="col" className="actions-column">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredAndSortedDocuments.map((document) => (
-              <tr key={document.id} className="document-row">
-                <td className="checkbox-cell">
+        {/* Document list */}
+        <div className="document-table-container">
+          <table className="document-table">
+            <thead className="document-table-header">
+              <tr>
+                <th scope="col" className="checkbox-column">
                   <input
                     type="checkbox"
                     className="checkbox"
-                    checked={selectedDocuments.has(document.id)}
-                    onChange={() => toggleDocumentSelection(document.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedDocuments(new Set(documents.map(doc => doc.id)));
+                      } else {
+                        setSelectedDocuments(new Set());
+                      }
+                    }}
+                    checked={selectedDocuments.size === documents.length && documents.length > 0}
                   />
-                </td>
-                <td className="document-cell">
-                  <div className="document-info">
-                    <FileText className="document-icon" />
-                    <div className="document-details">
-                      <div className="document-name">{document.title}</div>
-                      {/* <div className="document-created">Created: {formatDate(document.createdAt)}</div> */}
-                    </div>
-                  </div>
-                </td>
-                {/* <td className="date-cell">
-                  {formatDate(document.updatedAt)}
-                </td>
-                <td className="size-cell">
-                  {formatFileSize(document.fileSize)}
-                </td> */}
-                <td className="actions-cell">
-                  <div className="action-buttons">
-                    <button
-                      className="download-button"
-                      onClick={() => handleDownload(document.id, document.title)}
-                    >
-                      <Download className="action-icon" />
-                    </button>
-                    {/* <button
-                      className="edit-button"
-                    >
-                      <Edit className="action-icon" />
-                    </button> */}
-                    <button
-                      className="delete-button"
-                      onClick={() => handleDelete(document.id)}
-                      disabled={isDeleting}
-                    >
-                      {isDeleting ? <Loader className="action-icon spin" /> : <Trash2 className="action-icon" />}
-                    </button>
-                  </div>
-                </td>
+                </th>
+                <th scope="col" className="document-column">
+                  Document
+                </th>
+                {/* <th scope="col" className="date-column">
+                  Last Modified
+                </th>
+                <th scope="col" className="size-column">
+                  Size
+                </th> */}
+                <th scope="col" className="actions-column">
+                  Actions
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredAndSortedDocuments.map((document) => (
+                <tr key={document.id} className="document-row">
+                  <td className="checkbox-cell">
+                    <input
+                      type="checkbox"
+                      className="checkbox"
+                      checked={selectedDocuments.has(document.id)}
+                      onChange={() => toggleDocumentSelection(document.id)}
+                    />
+                  </td>
+                  <td className="document-cell">
+                    <div className="document-info">
+                      <FileText className="document-icon" />
+                      <div className="document-details">
+                        <div className="document-name">{document.title}</div>
+                        {/* <div className="document-created">Created: {formatDate(document.createdAt)}</div> */}
+                      </div>
+                    </div>
+                  </td>
+                  {/* <td className="date-cell">
+                    {formatDate(document.updatedAt)}
+                  </td>
+                  <td className="size-cell">
+                    {formatFileSize(document.fileSize)}
+                  </td> */}
+                  <td className="actions-cell">
+                    <div className="action-buttons">
+                      <button
+                        className="download-button"
+                        onClick={() => handleDownload(document.id, document.title)}
+                      >
+                        <Download className="action-icon" />
+                      </button>
+                      {/* <button
+                        className="edit-button"
+                      >
+                        <Edit className="action-icon" />
+                      </button> */}
+                      <button
+                        className="delete-button"
+                        onClick={() => handleDelete(document.id)}
+                        disabled={isDeleting}
+                      >
+                        {isDeleting ? <Loader className="action-icon spin" /> : <Trash2 className="action-icon" />}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+      <FileUploader />
+    </>
+    
   );
 };
 
