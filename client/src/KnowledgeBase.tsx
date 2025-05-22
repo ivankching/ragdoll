@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { FileText, Trash2, Download, Loader } from 'lucide-react';
 import './KnowledgeBase.css';
 
+const SERVER_URL: String = "http://127.0.0.1:8000";
+
 // Document type definition
 interface Document {
   id: string;
@@ -23,7 +25,7 @@ interface KnowledgeBaseProps {
 const DocumentService = {
   async getDocuments(): Promise<Document[]> {
     try {
-      const response = await fetch('http://127.0.0.1:8000/knowledge-base');
+      const response = await fetch(`${SERVER_URL}/knowledge-base`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch documents');
@@ -39,7 +41,7 @@ const DocumentService = {
   // DOES NOT WORK
   async deleteDocument(id: string): Promise<void> {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/knowledge-base/${id}`, {
+      const response = await fetch(`${SERVER_URL}/knowledge-base/${id}`, {
         method: 'DELETE',
       });
       
@@ -55,7 +57,7 @@ const DocumentService = {
   // DOES NOT WORK
   async downloadDocument(id: string): Promise<Blob> {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/knowledge-base/${id}/download`);
+      const response = await fetch(`${SERVER_URL}/knowledge-base/${id}/download`);
       
       if (!response.ok) {
         throw new Error('Failed to download document');
@@ -80,7 +82,24 @@ const FileUploader = () => {
   };
 
   const handleUpload = async () => {
-    //TODO
+    if (file) {
+      console.log("Uploading file");
+
+      const formData: FormData = new FormData();
+      formData.append('document', file);
+
+      try {
+        const result = await fetch(`${SERVER_URL}/knowledge-base/upload`, {
+          method: "POST",
+          body: formData
+        });
+
+        const data = await result.json();
+        console.log(data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
   };
 
   return (
