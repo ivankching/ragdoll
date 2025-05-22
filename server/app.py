@@ -38,7 +38,7 @@ async def query(query: Query):
 
 @app.get('/knowledge-base')
 async def get_knowledge_base():
-    return get_files()
+    return await get_files()
 
 @app.post('/knowledge-base/upload')
 async def upload_document(document: UploadFile):
