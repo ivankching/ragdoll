@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, type SetStateAction } from 'react';
+import type { Dispatch } from 'react';
 import { FileText, Trash2, Download, Loader } from 'lucide-react';
 import './KnowledgeBase.css';
 
@@ -72,7 +73,10 @@ const DocumentService = {
 };
 
 // Uploader for a single file
-const FileUploader = () => {
+// TODO: pass KnowledgeBase prop setDocument to update based on file upload
+const FileUploader = ({ documents, updateDocuments }: 
+                      { documents: Document[], 
+                        updateDocuments: Dispatch<SetStateAction<Document[]>> }) => {
   const [file, setFile] = useState<File | null>(null);
   
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,6 +99,12 @@ const FileUploader = () => {
         });
 
         const data = await result.json();
+        const newDoc: Document = {
+          id: file.name,
+          title: file.name
+        }
+        const newDocuments = documents.concat([newDoc]);
+        updateDocuments(newDocuments);
         console.log(data);
       } catch (error) {
         console.error(error);
@@ -427,7 +437,7 @@ const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({
           </table>
         </div>
       </div>
-      <FileUploader />
+      <FileUploader documents= {documents} updateDocuments={setDocuments} />
     </>
     
   );
