@@ -241,7 +241,6 @@ const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({
     }
   };
 
-  // DOES NOT WORK: Handle bulk document deletion
   const handleBulkDelete = async () => {
     if (selectedDocuments.size === 0) return;
     
