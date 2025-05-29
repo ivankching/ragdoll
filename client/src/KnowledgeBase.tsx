@@ -54,10 +54,9 @@ const DocumentService = {
     }
   },
   
-  // DOES NOT WORK
-  async downloadDocument(id: string): Promise<Blob> {
+  async downloadDocument(filename: string): Promise<Blob> {
     try {
-      const response = await fetch(`${SERVER_URL}/knowledge-base/${id}/download`);
+      const response = await fetch(`${SERVER_URL}/knowledge-base/${filename}`);
       
       if (!response.ok) {
         throw new Error('Failed to download document');
@@ -262,10 +261,9 @@ const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({
     }
   };
 
-  // DOES NOT WORK: Handle document download
-  const handleDownload = async (id: string, title: string) => {
+  const handleDownload = async (title: string) => {
     try {
-      const blob = await DocumentService.downloadDocument(id);
+      const blob = await DocumentService.downloadDocument(title);
       
       // Create download link
       const url = window.URL.createObjectURL(blob);
@@ -410,7 +408,7 @@ const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({
                     <div className="action-buttons">
                       <button
                         className="download-button"
-                        onClick={() => handleDownload(document.id, document.title)}
+                        onClick={() => handleDownload(document.title)}
                       >
                         <Download className="action-icon" />
                       </button>

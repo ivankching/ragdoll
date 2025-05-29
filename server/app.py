@@ -1,9 +1,10 @@
 from fastapi import FastAPI, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from pathlib import Path
 from rag.query_data import create_prompt, chat_model_response
-from knowledge_base.file_management import get_files, upload_file, delete_file
+from knowledge_base.file_management import get_files, upload_file, delete_file, get_filepath
 
 
 
@@ -63,3 +64,10 @@ async def delete_document(filename: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail="Document deletion failed")
     
+@app.get("/knowledge-base/{filename}")
+async def download_document(filename: str):
+    try:
+        filepath = await get_filepath(filename)
+        return FileResponse(filepath)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Document retrieval failed")

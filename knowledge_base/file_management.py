@@ -36,3 +36,7 @@ async def delete_file(file_name: str) -> Union[None, NoReturn]:
         file_path.unlink()
     except OSError as e:
         raise(f"Error: {e}")
+    
+async def get_filepath(file_name: str) -> Union[str, NoReturn]:
+    file_path: Path = ROOT / os.environ["DATA_PATH"] / file_name
+    return file_path
