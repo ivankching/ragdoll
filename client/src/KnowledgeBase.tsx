@@ -39,10 +39,9 @@ const DocumentService = {
     }
   },
   
-  // DOES NOT WORK
-  async deleteDocument(id: string): Promise<void> {
+  async deleteDocument(filename: string): Promise<void> {
     try {
-      const response = await fetch(`${SERVER_URL}/knowledge-base/${id}`, {
+      const response = await fetch(`${SERVER_URL}/knowledge-base/${filename}`, {
         method: 'DELETE',
       });
       
@@ -228,13 +227,12 @@ const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({
 
 
 
-  // DOES NOT WORK: Handle document deletion
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (filename: string) => {
     if (window.confirm('Are you sure you want to delete this document?')) {
       try {
         setIsDeleting(true);
-        await DocumentService.deleteDocument(id);
-        setDocuments(documents.filter(doc => doc.id !== id));
+        await DocumentService.deleteDocument(filename);
+        setDocuments(documents.filter(doc => doc.title !== filename));
       } catch (err) {
         alert('Failed to delete document. Please try again.');
       } finally {
@@ -243,19 +241,18 @@ const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({
     }
   };
 
-  // DOES NOT WORK: Handle bulk document deletion
   const handleBulkDelete = async () => {
     if (selectedDocuments.size === 0) return;
     
     if (window.confirm(`Are you sure you want to delete ${selectedDocuments.size} selected documents?`)) {
       try {
         setIsDeleting(true);
-        const deletePromises = Array.from(selectedDocuments).map(id => 
-          DocumentService.deleteDocument(id)
+        const deletePromises = Array.from(selectedDocuments).map(title => 
+          DocumentService.deleteDocument(title)
         );
         await Promise.all(deletePromises);
         
-        setDocuments(documents.filter(doc => !selectedDocuments.has(doc.id)));
+        setDocuments(documents.filter(doc => !selectedDocuments.has(doc.title)));
         setSelectedDocuments(new Set());
       } catch (err) {
         alert('Failed to delete some documents. Please try again.');
@@ -424,7 +421,7 @@ const KnowledgeBase: React.FC<KnowledgeBaseProps> = ({
                       </button> */}
                       <button
                         className="delete-button"
-                        onClick={() => handleDelete(document.id)}
+                        onClick={() => handleDelete(document.title)}
                         disabled={isDeleting}
                       >
                         {isDeleting ? <Loader className="action-icon spin" /> : <Trash2 className="action-icon" />}

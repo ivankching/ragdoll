@@ -2,6 +2,7 @@ from dotenv import load_dotenv, find_dotenv
 import os
 from pathlib import Path
 from fastapi import UploadFile
+from typing import Union, NoReturn
 
 load_dotenv(find_dotenv())
 ROOT = Path(__file__).parent.parent
@@ -27,3 +28,11 @@ async def upload_file(document: UploadFile):
         return True
     except:
         return False
+    
+async def delete_file(file_name: str) -> Union[None, NoReturn]:
+    file_path: Path = ROOT / os.environ["DATA_PATH"] / file_name
+
+    try:
+        file_path.unlink()
+    except OSError as e:
+        raise(f"Error: {e}")
