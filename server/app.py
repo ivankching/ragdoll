@@ -51,7 +51,7 @@ async def upload_document(document: UploadFile):
         "message": "Document uploaded successfully"
     }
 
-@app.delete("/knowledge-base/delete/{filename}")
+@app.delete("/knowledge-base/{filename}")
 async def delete_document(filename: str):
     try:
         await delete_file(filename)
