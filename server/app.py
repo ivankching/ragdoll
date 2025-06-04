@@ -4,6 +4,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from pathlib import Path
 from rag.query_data import create_prompt, chat_model_response
+from rag.create_db import generate_data_store
 from knowledge_base.file_management import get_files, upload_file, delete_file, get_filepath
 
 
@@ -71,3 +72,17 @@ async def download_document(filename: str):
         return FileResponse(filepath)
     except Exception as e:
         raise HTTPException(status_code=500, detail="Document retrieval failed")
+    
+@app.put("/knowledge-base/build")
+async def build_knowledge_base():
+    """Builds (or rebuilds) the chroma vector database using all documents in /data directory"""
+    try:
+        generate_data_store()
+
+        return {
+            "message": "Knowledge base built"
+        }
+    
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail="Knowledge base failed to build")
