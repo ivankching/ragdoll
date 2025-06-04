@@ -7,6 +7,7 @@ from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
+from chromadb import PersistentClient
 
 ROOT = Path(__file__).parent.parent
 
@@ -33,11 +34,24 @@ def save_to_chroma(chunks: list[Document]):
     chroma_path = f"{ROOT}/{os.environ["CHROMA_PATH"]}"
     # Clear out the db directory first
     if os.path.exists(chroma_path):
-        shutil.rmtree(chroma_path)
+
+        try:
+            chroma_client = PersistentClient(path=chroma_path)
+            chroma_client.delete_collection("knowledge_base")
+            print("Knowledge base deleted successfully")
+        except:
+            print("No knowledge base to delete")
+
+        # Temporary fix to windows specific(?) issue. Will revisit when trying to containerize
+        # Will only delete on app restart due to antivirus(?) on windows
+        try:
+            shutil.rmtree(chroma_path)
+        except Exception as e:
+            print(e)
 
     # Create a vector db from the documents
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-l6-v2")
-    db = Chroma.from_documents(chunks, embeddings, persist_directory=chroma_path)
+    db = Chroma.from_documents(chunks, embeddings, persist_directory=chroma_path, collection_name="knowledge_base")
     print(f"Saved {len(chunks)} chunks to database in {chroma_path}.")
 
 
