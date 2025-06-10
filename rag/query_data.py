@@ -19,7 +19,7 @@ Answer this question based on the context above: {question}
 
 def query_db(query):
     embedding_fn =  HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-l6-v2")
-    db = Chroma(collection_name="knowledge-base", persist_directory=f"{ROOT}/{getenv("CHROMA_PATH")}", embedding_function=embedding_fn)
+    db = Chroma(collection_name="knowledge_base", persist_directory=f"{ROOT}/{getenv("CHROMA_PATH")}", embedding_function=embedding_fn)
 
     results = db.similarity_search_with_relevance_scores(query, k=4)
     if len(results) == 0:
