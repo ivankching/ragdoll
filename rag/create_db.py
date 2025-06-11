@@ -72,7 +72,7 @@ def add_document(document_filename: str):
 def remove_document(document_filename: str):
     print(f"Deleting file {document_filename} from vector store")
     db: Chroma = get_db()
-    collection = db.get()
+    collection: dict[str, any] = db.get()
     ids_to_delete = []
 
     for idx in range(len(collection['ids'])):
