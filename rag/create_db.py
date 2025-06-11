@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 import shutil
 from langchain_core.documents import Document
-from langchain_community.document_loaders import PyPDFDirectoryLoader
+from langchain_community.document_loaders import PyPDFDirectoryLoader, PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
@@ -55,10 +55,9 @@ def generate_data_store():
     chunks = split_text(documents)
     save_to_chroma(chunks)
 
-# TODO fix bug "Split 0 documents into 0 chunks."
 def add_document(document_filename: str):
     print(f"Loading file: {document_filename}")
-    loader = PyPDFDirectoryLoader(f"{DATA_PATH}/{document_filename}")
+    loader = PyPDFLoader(f"{DATA_PATH}/{document_filename}")
     document = loader.load()
     chunks = split_text(document)
     db = get_db()
