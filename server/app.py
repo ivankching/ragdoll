@@ -4,6 +4,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from pathlib import Path
 from rag.query_data import create_prompt, chat_model_response
+from rag.create_db import add_document, remove_document
 from knowledge_base.file_management import get_files, upload_file, delete_file, get_filepath
 
 
@@ -46,6 +47,12 @@ async def upload_document(document: UploadFile):
     uploaded = await upload_file(document)
     if not uploaded:
         raise HTTPException(status_code=500, detail="Document upload failed")
+
+    try:
+        add_document(document.filename)
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail="Document failed to be added to vector store")
         
     return {
         "document_title": document.filename,
@@ -56,6 +63,7 @@ async def upload_document(document: UploadFile):
 async def delete_document(filename: str):
     try:
         await delete_file(filename)
+        remove_document(filename)
 
         return {
             "document_title": filename,
